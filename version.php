@@ -18,7 +18,7 @@
  * Version information.
  *
  * @package   local_curriki_moodle_plugin
- * @copyright 2020 Curriki <info@curriki.org> 
+ * @copyright 2020 CurrikiStudio <info@curriki.org> 
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

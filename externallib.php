@@ -18,124 +18,110 @@
  * External webservice template.
  *
  * @package   local_curriki_moodle_plugin
- * @copyright 2020 Curriki <info@curriki.org>
+ * @copyright 2020 CurrikiStudio <info@curriki.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/externallib.php');
+require_once "includes.php";
 
 /**
  * External webservice functions.
  *
  * @package   local_curriki_moodle_plugin
- * @copyright 2020 Curriki <info@curriki.org>
+ * @copyright 2020 CurrikiStudio <info@curriki.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_curriki_moodle_plugin_external extends external_api {
 
-    /**
-     * Returns description of method parameters.
-     *
-     * @return external_function_parameters
-     */
-    public static function get_information_parameters() {
+    public static function create_playlist_parameters() {
         return new external_function_parameters(
             array(
-                'type' => new external_value( PARAM_TEXT, 'The type of plugins to retrieve (optional).', false, null),
-                'contribonly' => new external_value(PARAM_INT, 'Get only additional installed (optional)..', false, null)
+                'entity_name' => new external_value( PARAM_TEXT, 'entity name'),
+                'entity_type' => new external_value(PARAM_TEXT, 'entity type like program/playlist/activity'),
+                'entity_id' => new external_value(PARAM_TEXT, 'entity id'),
+                'parent_name' => new external_value(PARAM_TEXT, 'parent name'),
+                'parent_type' => new external_value(PARAM_TEXT, 'parent type')
             )
         );
     }
 
-    /**
-     * Returns plugins information.
-     *
-     * @param string $type
-     * @param int|null $contribonly
-     * @return string
-     * @throws dml_exception
-     * @throws invalid_parameter_exception
-     * @throws required_capability_exception
-     */
-    public static function get_information($type, $contribonly) {
+    public static function create_playlist($entity_name, $entity_type, $entity_id, $parent_name, $parent_type) {
         $syscontext = context_system::instance();
         require_capability('moodle/site:config', $syscontext);
 
-        $params = self::validate_parameters(self::get_information_parameters(),
+        $params = self::validate_parameters(self::create_playlist_parameters(),
             array(
-                'type' => $type,
-                'contribonly' => $contribonly
+                'entity_name' => $entity_name,
+                'entity_type' => $entity_type,
+                'entity_id' => $entity_id,
+                'parent_name' => $parent_name,
+                'parent_type' => $parent_type
             )
         );
 
-        $pluginman = core_plugin_manager::instance();
+        global $DB;     
+        $parent_data['parent_name'] = $params['parent_name'];
+        $parent_data['parent_type'] = $params['parent_type'];
+        
+        $entity_data['entity_name'] = $params['entity_name'];
+        $entity_data['entity_type'] = $params['entity_type'];
+        $entity_data['entity_id']   = $params['entity_id'];
 
-        if (!empty($params['type'])) {
-            if (!empty($params['contribonly'])) {
-                // Get additional plugins by type and contrib.
-                $plugininfo = self::get_plugins_by_parameters($pluginman, $type, false);
-            } else {
-                // Get all plugins by type.
-                $plugininfo = $pluginman->get_plugins_of_type($type);
-            }
-        } else {
-            if (!empty($params['contribonly'])) {
-                // Get all plugins by contrib.
-                $plugininfo = self::get_plugins_by_parameters($pluginman, null, false);
-            } else {
-                // Get all plugins.
-                $plugininfo = self::get_plugins_by_parameters($pluginman, null, true);
-            }
-        }
+        /***** Step-1 fetc/create course against program name *****/
+        $course = $DB->get_record('course', array('fullname' => trim($parent_data['parent_name'])), '*');
+        if(!is_object($course)){
+            $new_course = new stdClass();
+            $new_course->fullname = trim($parent_data['parent_name']);
+            $new_course->shortname = strtolower( implode( "-",  explode( " ", trim($parent_data['parent_name']) ) ) );
+            $new_course->categoryid = 1;
+            $new_course_rows = core_course_external::create_courses([(array)$new_course]);
+            $course = $DB->get_record('course', array('id' => $new_course_rows[0]['id']), '*');
+            course_create_section($course, 0);
+        }        
+        
+        $course_id = $course->id;
 
-        if (empty($plugininfo)) {
-            return array();
-        }
+        /***** Step-2 Update Playlist Name *****/
+        course_section::update_name($course_id, SECTION_ID_FOR_PLAYLIST, SECTION_NAME_FOR_PLAYLIST);
 
-        return $plugininfo;
+        /***** Step-3 Create Playlist LTI *****/
+        $program_course = program_course::get_instance();        
+        $course_content = $program_course->get_content($course_id);
+        $section_data = course_section::get_section_data($course_content, SECTION_NAME_FOR_PLAYLIST);
+        $section_module = course_section::get_module_by_name($section_data['modules'], $entity_data['entity_name']);
+        
+        $lti_tool_config = $DB->get_record('lti_types', array('name' => LTI_TOOL_NAME), '*');
+        if( is_object($course) && is_object($lti_tool_config) && is_null($section_module) ){
+            lti_module::set_data($entity_data, $lti_tool_config);
+            $lti_module = add_moduleinfo(lti_module::$data, $course);            
+            $playlist_lti->id = $lti_module->id;
+            $playlist_lti->name = $lti_module->name;
+        }else{            
+            $playlist_lti->id = $section_module['id'];
+            $playlist_lti->name = $section_module['name'];
+        }      
+        
+        $obj = new stdClass();
+        $obj->status = "success";        
+        $obj->data = $playlist_lti;
+
+        $result[] = $obj;        
+        return $result;
     }
 
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     */
-    public static function get_information_returns() {
+    public static function create_playlist_returns() {                
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'type' => new external_value(PARAM_TEXT, 'The type'),
-                    'name' => new external_value(PARAM_TEXT, 'The name'),
-                    'versiondb' => new external_value(PARAM_INT, 'The installed version'),
-                    'release' => new external_value(PARAM_TEXT, 'The installed release')
-                ), 'plugins'
+                    'status' => new external_value(PARAM_TEXT, 'success'),
+                    'data' => new external_single_structure([
+                            'id' => new external_value(PARAM_INT, 0),
+                            'name' => new external_value(PARAM_TEXT, 'none')
+                        ])
+                )
             )
         );
     }
 
-    /**
-     * Retrieves plugin data based on type and contrib.
-     *
-     * @param object $pluginman
-     * @param string $type
-     * @param bool $all
-     * @return array
-     */
-    protected static function get_plugins_by_parameters($pluginman, $type = null, $all = false) {
-        $plugins = array();
-        $plugininfo = $pluginman->get_plugins();
-
-        foreach ($plugininfo as $plugintype => $pluginnames) {
-            foreach ($pluginnames as $pluginname => $pluginfo) {
-                if ($all || ($pluginfo->type == $type && !$pluginfo->is_standard()) ||
-                    (is_null($type) && !$pluginfo->is_standard())) {
-                        $plugins[$pluginname] = $pluginfo;
-                }
-            }
-        }
-
-        return $plugins;
-    }
 }

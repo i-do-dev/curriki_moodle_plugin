@@ -18,11 +18,11 @@
  * Plugin related strings.
  *
  * @package   local_curriki_moodle_plugin
- * @copyright 2020 Curriki <info@curriki.org> 
+ * @copyright 2020 CurrikiStudio <info@curriki.org> 
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Curriki';
-$string['privacy:metadata'] = 'The Plugins curriki does not store any personal data.';
+$string['pluginname'] = 'CurrikiStudio';
+$string['privacy:metadata'] = 'CurrikiStudio create programs/playlists/activities and create LTI modules';

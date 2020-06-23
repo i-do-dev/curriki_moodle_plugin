@@ -1,6 +1,6 @@
-# Moodle Plugins Curriki Plugin [![Build Status](https://travis-ci.org/adpe/moodle-local_curriki_moodle_plugin.svg?branch=master)](https://travis-ci.org/adpe/moodle-local_curriki_moodle_plugin)
+# Moodle Plugins CurrikiStudio Plugin [![Build Status](https://travis-ci.org/adpe/moodle-local_curriki_moodle_plugin.svg?branch=master)](https://travis-ci.org/adpe/moodle-local_curriki_moodle_plugin)
 
-This plugin install a new webservice `local_curriki_moodle_plugin_get_information` which can be use to retrieve information about installed plugins.
+This plugin install a new webservice `local_curriki_moodle_plugin_create_playlist` which can be use to retrieve information about installed plugins.
 
 ## Main features
 
