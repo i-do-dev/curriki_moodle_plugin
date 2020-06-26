@@ -61,4 +61,11 @@ class lti_module
 
         self::$data = (object)$d;
     }
+
+    public static function get_type_by_name($lti_types, $lti_type_name)
+    {
+        return array_filter(function($obj){
+            return $obj->name == $lti_type_name ? $obj : null;
+        }, $lti_type_name);
+    }
 }
