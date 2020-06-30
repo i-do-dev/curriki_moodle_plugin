@@ -64,8 +64,8 @@ class lti_module
 
     public static function get_type_by_name($lti_types, $lti_type_name)
     {
-        return array_filter(function($obj){
-            return $obj->name == $lti_type_name ? $obj : null;
-        }, $lti_type_name);
+        return array_filter($lti_types, function($obj) use($lti_type_name) {
+            return $obj->name == $lti_type_name;
+        });
     }
 }
