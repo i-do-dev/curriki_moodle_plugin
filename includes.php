@@ -12,3 +12,4 @@ require_once($CFG->dirroot . '/mod/lti/lib.php');
 require_once "src/program_course.php";
 require_once "src/course_section.php";
 require_once "src/lti_module.php";
+require_once "src/lti_tool_setup.php";

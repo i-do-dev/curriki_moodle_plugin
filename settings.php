@@ -1,12 +1,18 @@
 <?php
-
 require_once "includes.php";
 
 // handle create External tool
 if ( isset($_GET['action']) && $_GET['action'] == 'setup_lti_tool') {
     
+    //lti_tool_setup::create_tool();    
+    $lti_tool_settings = lti_module::get_type_by_name(lti_get_lti_types(), LTI_TOOL_NAME);    
+    if (!is_null($lti_tool_settings)) {
+        $data['typeid'] = $lti_tool_settings->id;
+        $data['lti_clientid'] = $lti_tool_settings->clientid;
+        $data['lti_publickey'] = "THIS IS NEW PUBLIC KEY";
+        //lti_tool_setup::update_tool($data);
+    }
     
-
     $url = $CFG->wwwroot . '/admin/settings.php?section=local_curriki_moodle_plugin';
     header("Location: $url");
 }
@@ -22,8 +28,7 @@ if( $hassiteconfig ){
     $ADMIN->add( 'localplugins', $curriki_settings );    
     
     $lti_types = lti_get_lti_types();    
-    $lti_tool_settings = lti_module::get_type_by_name($lti_types, LTI_TOOL_NAME);
-    $lti_tool_settings = is_array($lti_tool_settings) && count($lti_tool_settings) > 0 ? array_values($lti_tool_settings)[0] : null;
+    $lti_tool_settings = lti_module::get_type_by_name($lti_types, LTI_TOOL_NAME);    
     
     if (!is_null($lti_tool_settings)) {
         global $CFG;        

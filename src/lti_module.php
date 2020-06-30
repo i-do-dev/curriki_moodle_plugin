@@ -64,8 +64,10 @@ class lti_module
 
     public static function get_type_by_name($lti_types, $lti_type_name)
     {
-        return array_filter($lti_types, function($obj) use($lti_type_name) {
+        $lti_tool_settings = array_filter($lti_types, function($obj) use($lti_type_name) {
             return $obj->name == $lti_type_name;
         });
+
+        return is_array($lti_tool_settings) && count($lti_tool_settings) > 0 ? array_values($lti_tool_settings)[0] : null;
     }
 }
