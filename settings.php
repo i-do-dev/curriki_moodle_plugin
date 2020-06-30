@@ -2,6 +2,16 @@
 
 require_once "includes.php";
 
+// handle create External tool
+if ( isset($_GET['action']) && $_GET['action'] == 'setup_lti_tool') {
+    
+    
+
+    $url = $CFG->wwwroot . '/admin/settings.php?section=local_curriki_moodle_plugin';
+    header("Location: $url");
+}
+
+
 // Ensure the configurations for this site are set
 if( $hassiteconfig ){
 
@@ -17,10 +27,11 @@ if( $hassiteconfig ){
     
     if (!is_null($lti_tool_settings)) {
         global $CFG;        
-        $external_tool_link = '<a href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=update&id='.$lti_tool_settings->id.'&sesskey='.sesskey().'">'. $lti_tool_settings->name .'</a>';
+        $external_tool_link = '<a href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=update&id='.$lti_tool_settings->id.'&sesskey='.sesskey().'"><i class="icon fa fa-cog fa-fw"></i>'. $lti_tool_settings->name .'</a>';
         $curriki_settings->add( new admin_setting_heading('currikitoolinfo', 'Configured External Tool', $external_tool_link ) );
     }else {
-        $curriki_settings->add( new admin_setting_heading('currikitoolinfo', 'Configured External Tool', "Unable to find External Tool. Please Uninstall and Install plugin again." ) );
+        $external_tool_link = '<a class="btn btn-primary" href="'.$CFG->wwwroot.'/admin/settings.php?section=local_curriki_moodle_plugin&action=setup_lti_tool">'. 'Setup CurrikiStudioLTI Tool' .'</a>';
+        $curriki_settings->add( new admin_setting_heading('currikitoolinfo', 'External Tool Configuration', $external_tool_link ) );
     }
     
 }
