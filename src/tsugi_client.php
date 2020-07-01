@@ -14,7 +14,7 @@ class tsugi_client
             "deploy_key" => $typeconfig['deploymentid']
         ];
     
-        $request_url = TSUGI_HOST . "/mod/curriki/index.php/register-platform";
+        $request_url = TSUGI_HOST_API . "/mod/curriki/index.php/register-platform";
         curl_helper::prepare($request_url, $post_data);
         curl_helper::exec_post();
         $response = curl_helper::get_response();
