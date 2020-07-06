@@ -1,8 +1,8 @@
 <?php
 
 // Please set TSUGI_HOST and TSUGI_HOST_API for your Tsugi server. Mostly both constant would be the same.
-define('TSUGI_HOST', 'http://localhost/tsugi');
-define('TSUGI_HOST_API', 'http://host.docker.internal/tsugi');
+define('TSUGI_HOST', 'https://tsugi.curriki.org');
+define('TSUGI_HOST_API', 'https://tsugi.curriki.org');
 
 define('SECTION_ID_FOR_PLAYLIST',1);
 define('SECTION_NAME_FOR_PLAYLIST', 'Playlists');
