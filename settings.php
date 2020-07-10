@@ -25,7 +25,7 @@ if ( isset($_GET['action']) && $_GET['action'] == 'setup_lti_tool') {
 if( $hassiteconfig ){
 
     // Create the new settings page
-    $curriki_settings = new admin_settingpage( 'local_curriki_moodle_plugin', 'CurrikiStudio Settings' );
+    $curriki_settings = new admin_settingpage( 'local_curriki_moodle_plugin', 'CurrikiGo Settings' );
 
     // Create 
     $ADMIN->add( 'localplugins', $curriki_settings );    

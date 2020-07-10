@@ -1,21 +1,19 @@
-# Moodle Plugins CurrikiStudio Plugin [![Build Status](https://travis-ci.org/adpe/moodle-local_curriki_moodle_plugin.svg?branch=master)](https://travis-ci.org/adpe/moodle-local_curriki_moodle_plugin)
+# CurrikiGo Moodle Plugin
 
-This plugin install a new webservice `local_curriki_moodle_plugin_create_playlist` which can be use to retrieve information about installed plugins.
-
-## Main features
-
-There are two optional parameters which can be combined to fetch only given data:
-
-| key         | value  | description                             |
-|-------------|--------|-----------------------------------------|
-| type        | string | Only given plugin types will be fetched |
-| contribonly | int    | Only additional plugins will be fetched |
+This plugin connect Moodle to CurrikiStudio to access Programs, Playlists and Activites by following IMS GLobal LTI Advantage (LTI 1.3). It setup Moodle's External Tool which connect to CurrikiStudio.
 
 ## Installation
-1. Copy this plugin to the `local` directory of your Moodle instance: `git clone https://github.com/adpe/moodle-local_curriki_moodle_plugin.git local/curriki`
-2. Visit the notifications page to complete the install process
-
-For more information, visit [MoodleDocs](https://docs.moodle.org/37/en/Installing_plugins#Installing_manually_at_the_server) for installing contributed modules and plugins.
+1. Copy this plugin to the `local` directory of your Moodle instance: `git clone https://github.com/ActiveLearningStudio/curriki_moodle_plugin.git`
+2. Or download repository, make `zip` and follow this guide `https://docs.moodle.org/39/en/Installing_plugins#Installing_via_uploaded_ZIP_file`
+3. Optional - In case your own `CurrikiStudio` and `Tsugi` instances (or `local` environment) then edit `config.php` and set `TSUGI_HOST` and `TSUGI_HOST_API` constants.
+4. Visit the `Site Administration` page or notifications page to complete the install process
 
 ## Configuration
-Please create a `token` for this new created service `Plugins curriki` using [Site administration](https://FQDN/admin/settings.php?section=webservicetokens). It's important that the user has the capability `moodle/site:config`.
+1. Create a `token` as amdin user. Steps are:
+    1. `Site Administration` > `Plugins` > `Web services` > `Manage tokens`
+    2. Click on `Add`
+    3. Select the admin user and `CurrikiStudio` service
+    4. Click on Saves changes
+2. Setup `External tool` with one click 
+    1. Visit `Site administration` > `Plugins` > `Local plugins` > `CurrikiGo Settings`
+    2. Click on `Setup CurrikiStudioLTI Tool`. This will auto configure new `External Tool` named `CurrikiStudioLTI`.
