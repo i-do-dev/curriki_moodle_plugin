@@ -17,3 +17,6 @@ This plugin connect Moodle to CurrikiStudio to access Programs, Playlists and Ac
 2. Setup `External tool` with one click 
     1. Visit `Site administration` > `Plugins` > `Local plugins` > `CurrikiGo Settings`
     2. Click on `Setup CurrikiStudioLTI Tool`. This will auto configure new `External Tool` named `CurrikiStudioLTI`.
+
+## CurrikiStudio Playlists Block
+You can install [Block Level Plugin](https://github.com/ActiveLearningStudio/currikistudio_playlists) to add playlists as a `block` to the course. 
