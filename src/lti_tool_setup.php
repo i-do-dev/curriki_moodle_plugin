@@ -53,7 +53,7 @@ class lti_tool_setup
         $lti_tool->lti_clientid = $data['lti_clientid'];
         $lti_tool->lti_keytype = "RSA_KEY";
         $lti_tool->lti_publickey = $data['lti_publickey'];
-        $lti_tool->lti_initiatelogin = TSUGI_HOST . "/lti/oidc_login";
+        $lti_tool->lti_initiatelogin = TSUGI_HOST . "/lti/oidc_login/".$data['issuer_guid'];
         $lti_tool->lti_redirectionuris = TSUGI_HOST . "/lti/oidc_launch";
         $lti_tool->lti_customparameters = "";
         $lti_tool->lti_coursevisible = "2";

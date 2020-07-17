@@ -8,11 +8,14 @@ if ( isset($_GET['action']) && $_GET['action'] == 'setup_lti_tool') {
     $lti_types = lti_filter_tool_types(lti_get_lti_types(), LTI_TOOL_STATE_CONFIGURED);
     $lti_tool_settings = lti_module::get_type_by_name($lti_types, LTI_TOOL_NAME);    
     if (!is_null($lti_tool_settings)) {
-        $tsugi_data = tsugi_client::register_platform($lti_tool_settings);        
-        $data['typeid'] = $lti_tool_settings->id;
-        $data['lti_clientid'] = $lti_tool_settings->clientid;
-        $data['lti_publickey'] = $tsugi_data->issure->lti13_pubkey;
-        lti_tool_setup::update_tool($data);
+        $tsugi_data = tsugi_client::register_platform($lti_tool_settings);
+        if($tsugi_data){
+            $data['typeid'] = $lti_tool_settings->id;
+            $data['lti_clientid'] = $lti_tool_settings->clientid;
+            $data['lti_publickey'] = $tsugi_data->issure->lti13_pubkey;
+            $data['issuer_guid'] = $tsugi_data->issure->issuer_guid;
+            lti_tool_setup::update_tool($data);
+        }
     }
     
     $url = $CFG->wwwroot . '/admin/settings.php?section=local_curriki_moodle_plugin';
