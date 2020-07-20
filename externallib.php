@@ -27,13 +27,9 @@ class local_curriki_moodle_plugin_external extends external_api {
     }
 
     public static function fetch_course(){
-
-        var_dump( class_exists('core_course_external') );
-        die;
-
         $obj = new stdClass();
         $obj->status = "success";        
-        $obj->data = "test fetch";
+        $obj->data = [ "id" => 101, "name" => "test fetch"];
 
         $result[] = $obj;        
         return $result;
