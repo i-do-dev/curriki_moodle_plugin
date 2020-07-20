@@ -3,8 +3,6 @@
  * Web service local plugin template external functions and service definitions.
  *
  * @package   local_curriki_moodle_plugin
- * @copyright 2020 CurrikiStudio <info@curriki.org> 
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -15,7 +13,14 @@ $functions = array(
         'classname'   => 'local_curriki_moodle_plugin_external',
         'methodname'  => 'create_playlist',
         'classpath'   => 'local/curriki_moodle_plugin/externallib.php',
-        'description' => 'CurrikiStudio Plugin APIs to create program/playlist/activities and publish to LTI.',
+        'description' => 'CurrikiStudio - Create a playlist under Playlists topic.',
+        'type'        => 'read',
+    ),
+    'local_curriki_moodle_plugin_fetch_course' => array(
+        'classname'   => 'local_curriki_moodle_plugin_external',
+        'methodname'  => 'fetch_course',
+        'classpath'   => 'local/curriki_moodle_plugin/externallib.php',
+        'description' => 'CurrikiStudio - Fetch a course for playlists.',
         'type'        => 'read',
     )
 );
@@ -23,7 +28,7 @@ $functions = array(
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
 $services = array(
     'CurrikiStudio' => array(
-        'functions' => array ('local_curriki_moodle_plugin_create_playlist'),
+        'functions' => array ('local_curriki_moodle_plugin_create_playlist', 'local_curriki_moodle_plugin_fetch_course'),
         'restrictedusers' => 0,
         'enabled' => 1
     )

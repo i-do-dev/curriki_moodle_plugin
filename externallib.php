@@ -17,7 +17,41 @@ require_once "includes.php";
  * @copyright 2020 CurrikiStudio <info@curriki.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 class local_curriki_moodle_plugin_external extends external_api {
+
+    public static function fetch_course_parameters() {
+        return new external_function_parameters(
+            array( 'name' => new external_value(PARAM_TEXT, 'course name') )
+        );
+    }
+
+    public static function fetch_course(){
+
+        var_dump( class_exists('core_course_external') );
+        die;
+
+        $obj = new stdClass();
+        $obj->status = "success";        
+        $obj->data = "test fetch";
+
+        $result[] = $obj;        
+        return $result;
+    }
+
+    public static function fetch_course_returns() {                
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'status' => new external_value(PARAM_TEXT, 'success'),
+                    'data' => new external_single_structure([
+                            'id' => new external_value(PARAM_INT, 0),
+                            'name' => new external_value(PARAM_TEXT, 'none')
+                        ])
+                )
+            )
+        );
+    }
 
     public static function create_playlist_parameters() {
         return new external_function_parameters(
@@ -107,6 +141,6 @@ class local_curriki_moodle_plugin_external extends external_api {
                 )
             )
         );
-    }
+    }    
 
 }
