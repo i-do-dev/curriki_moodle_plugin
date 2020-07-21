@@ -15,7 +15,6 @@ require_once "includes.php";
  *
  * @package   local_curriki_moodle_plugin
  * @copyright 2020 CurrikiStudio <info@curriki.org>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 class local_curriki_moodle_plugin_external extends external_api {
@@ -26,25 +25,28 @@ class local_curriki_moodle_plugin_external extends external_api {
         );
     }
 
-    public static function fetch_course(){
-        $obj = new stdClass();
-        $obj->status = "success";        
-        $obj->data = [ "id" => 101, "name" => "test fetch"];
-
-        $result[] = $obj;        
-        return $result;
+    public static function fetch_course($name){
+        $params = self::validate_parameters(self::fetch_course_parameters(), array('name' => $name));
+        global $DB;
+        $course = $DB->get_record('course', ["fullname" => trim($params['name'])], '*');
+        $section_modules = [];
+        if($course){
+            $program_course = program_course::get_instance();        
+            $course_content = $program_course->get_content($course->id);
+            $section_data = course_section::get_section_data($course_content, SECTION_NAME_FOR_PLAYLIST);
+            foreach ($section_data['modules'] as $key => $module) {
+                $section_modules[] = $module['name'];
+            }
+        }
+        return ['course' => $course->fullname, 'playlists' => $section_modules];
     }
 
     public static function fetch_course_returns() {                
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'status' => new external_value(PARAM_TEXT, 'success'),
-                    'data' => new external_single_structure([
-                            'id' => new external_value(PARAM_INT, 0),
-                            'name' => new external_value(PARAM_TEXT, 'none')
-                        ])
-                )
+
+        return new external_single_structure(
+            array(
+                'course' => new external_value(PARAM_TEXT, 'success'),
+                'playlists' => new external_multiple_structure(new external_value(PARAM_TEXT, 'playlist name'))
             )
         );
     }
