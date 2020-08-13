@@ -20,7 +20,8 @@ class lti_tool_setup
         $lti_tool->lti_coursevisible = "2";
         $lti_tool->typeid = 0;
         $lti_tool->lti_launchcontainer =  "3";
-        $lti_tool->lti_contentitem =  "0";
+        $lti_tool->lti_contentitem =  "1";
+        $lti_tool->lti_toolurl_ContentItemSelectionRequest =  TSUGI_HOST . "/mod/curriki/content";
         $lti_tool->oldicon =  "";
         $lti_tool->lti_icon = "";
         $lti_tool->lti_secureicon =   "";
@@ -59,7 +60,8 @@ class lti_tool_setup
         $lti_tool->lti_coursevisible = "2";
         $lti_tool->typeid = $data['typeid'];
         $lti_tool->lti_launchcontainer =  "3";
-        $lti_tool->lti_contentitem =  "0";
+        $lti_tool->lti_contentitem =  "1";
+        $lti_tool->lti_toolurl_ContentItemSelectionRequest =  TSUGI_HOST . "/mod/curriki/content";
         $lti_tool->oldicon =  "";
         $lti_tool->lti_icon = "";
         $lti_tool->lti_secureicon =   "";
