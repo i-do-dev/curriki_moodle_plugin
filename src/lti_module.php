@@ -23,7 +23,7 @@ class lti_module
             "urlmatchedtypeid" => 0,
             "lineitemresourceid" => "",
             "lineitemtag" => "",
-            "launchcontainer" => "1",
+            "launchcontainer" => "4",
             "resourcekey" => "",
             "password" => "",
             "instructorcustomparameters" => $entity_data["entity_type"]."=".$entity_data["entity_id"],
