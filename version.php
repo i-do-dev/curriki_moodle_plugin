@@ -9,8 +9,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2019112401;
-$plugin->requires = 2019052000;
+$plugin->version  = 2021102800;
+$plugin->requires = 2021051703.00;
 $plugin->component = 'local_curriki_moodle_plugin';
-$plugin->release = 'v1.0';
+$plugin->release = 'v1.1';
 $plugin->maturity = MATURITY_STABLE;
