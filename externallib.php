@@ -165,6 +165,33 @@ class local_curriki_moodle_plugin_external extends external_api {
                 )
             )
         );
+    }
+
+    public static function fetch_project_parameters() {
+        return new external_function_parameters(
+            array( 'course_id' => new external_value(PARAM_INT, 0) )
+        );
+    }
+
+    public static function fetch_project($course_id){
+        $params = self::validate_parameters(self::fetch_project_parameters(), array('course_id' => $course_id));
+        global $DB;
+        $courseproject = $DB->get_record('local_curriki_moodle_plugin', array('courseid' => trim($params['course_id'])), '*');
+        if(is_object($courseproject)){
+            return ['projectid' => $courseproject->projectid];
+        }
+        else{
+            return ['projectid' => NULL];
+        }
+    }
+
+    public static function fetch_project_returns() {                
+
+        return new external_single_structure(
+            array(
+                'projectid' => new external_value(PARAM_INT, 0)
+            )
+        );
     }    
 
 }
