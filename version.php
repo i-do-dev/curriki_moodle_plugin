@@ -10,7 +10,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2021111700;
-$plugin->requires = 2021031900;
+$plugin->requires = 2020110902.02;
 $plugin->component = 'local_curriki_moodle_plugin';
 $plugin->release = 'v1.2';
 $plugin->maturity = MATURITY_STABLE;
