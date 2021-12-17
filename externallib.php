@@ -139,9 +139,10 @@ class local_curriki_moodle_plugin_external extends external_api {
         
         if(empty($tool_url))
             $lti_tool_config = $DB->get_record('lti_types', array('name' => LTI_TOOL_NAME), '*');
-        else
-            $lti_tool_config = $DB->get_record('lti_types', array($DB->sql_compare_text('baseurl') => trim($entity_data['tool_url'])), '*');
-        
+        else{
+            $select_condition = $DB->sql_compare_text('baseurl') .' = "'. trim($entity_data['tool_url']).'"';
+            $lti_tool_config = $DB->get_record_select('lti_types', $select_condition, null, '*');
+        }
         if( is_object($course) && is_object($lti_tool_config) && is_null($section_module) ){
             lti_module::set_data($entity_data, $lti_tool_config);
             $lti_module = add_moduleinfo(lti_module::$data, $course);            
