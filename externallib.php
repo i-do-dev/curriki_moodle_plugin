@@ -68,12 +68,13 @@ class local_curriki_moodle_plugin_external extends external_api {
                 'entity_id' => new external_value(PARAM_TEXT, 'entity id'),
                 'parent_name' => new external_value(PARAM_TEXT, 'parent name'),
                 'parent_type' => new external_value(PARAM_TEXT, 'parent type'),
-                'project_id' => new external_value(PARAM_INT, 0)
+                'project_id' => new external_value(PARAM_INT, 0),
+                'tool_url' => new external_value(PARAM_TEXT, 'tool url',VALUE_OPTIONAL)
             )
         );
     }
 
-    public static function create_playlist($entity_name, $entity_type, $entity_id, $parent_name, $parent_type, $project_id) {
+    public static function create_playlist($entity_name, $entity_type, $entity_id, $parent_name, $parent_type, $project_id, $tool_url='') {
         $syscontext = context_system::instance();
         require_capability('moodle/site:config', $syscontext);
 
@@ -84,7 +85,8 @@ class local_curriki_moodle_plugin_external extends external_api {
                 'entity_id' => $entity_id,
                 'parent_name' => $parent_name,
                 'parent_type' => $parent_type,
-                'project_id' => $project_id
+                'project_id' => $project_id,
+                'tool_url' => $tool_url
             )
         );
 
@@ -96,6 +98,7 @@ class local_curriki_moodle_plugin_external extends external_api {
         $entity_data['entity_name'] = $params['entity_name'];
         $entity_data['entity_type'] = $params['entity_type'];
         $entity_data['entity_id']   = $params['entity_id'];
+        $entity_data['tool_url']   = $params['tool_url'];
 
         /***** Step-1 fetc/create course against program name *****/
         $projectcourse = $DB->get_record('local_curriki_moodle_plugin', array('projectid' => trim($parent_data['project_id'])), '*');
@@ -134,7 +137,11 @@ class local_curriki_moodle_plugin_external extends external_api {
         $section_data = course_section::get_section_data($course_content, SECTION_NAME_FOR_PLAYLIST);
         $section_module = course_section::get_module_by_name($section_data['modules'], $entity_data['entity_name']);
         
-        $lti_tool_config = $DB->get_record('lti_types', array('name' => LTI_TOOL_NAME), '*');
+        if(empty($tool_url))
+            $lti_tool_config = $DB->get_record('lti_types', array('name' => LTI_TOOL_NAME), '*');
+        else
+            $lti_tool_config = $DB->get_record('lti_types', array('baseurl' => trim($entity_data['tool_url'])), '*');
+        
         if( is_object($course) && is_object($lti_tool_config) && is_null($section_module) ){
             lti_module::set_data($entity_data, $lti_tool_config);
             $lti_module = add_moduleinfo(lti_module::$data, $course);            
