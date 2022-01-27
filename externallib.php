@@ -200,6 +200,47 @@ class local_curriki_moodle_plugin_external extends external_api {
                 'projectid' => new external_value(PARAM_INT, 0)
             )
         );
-    }    
+    }  
+    
+    public static function get_user_projects_parameters() {
+        return new external_function_parameters(
+            array( 'user_id' => new external_value(PARAM_INT, 0) )
+        );
+    }
+
+    public static function get_user_projects($user_id){
+        $params = self::validate_parameters(self::get_user_projects_parameters(), array('user_id' => $user_id));         
+        global $DB; 
+        $sql = 'select projectid from {user_enrolments} ue 
+                join {enrol} e on e.id = ue.enrolid 
+                join {local_curriki_moodle_plugin} lcmp on lcmp.courseid = e.courseid
+                where ue.userid=? AND ue.status=?';
+        $studentprojects = $DB->get_records_sql($sql, [trim($params['user_id']), 0]);
+        $stdntprojectids = array();
+        //$studentprojects = $DB->get_record('local_curriki_moodle_plugin', array('courseid' => trim($params['user_id'])), '*');
+        //if(is_array($studentprojects)){
+            foreach ($studentprojects as $project) {
+                $stdntprojectid = array();
+                $stdntprojectid['projectid'] = $project->projectid;
+                $stdntprojectids[] = $stdntprojectid;
+            }
+            
+            return $stdntprojectids;
+        //}
+        //else{
+        //    return ['projectids' => NULL];
+        //}
+    }
+
+    public static function get_user_projects_returns() {         
+        
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'projectid' => new external_value(PARAM_INT, 'Project ID')
+                )
+            )
+        );
+    }
 
 }

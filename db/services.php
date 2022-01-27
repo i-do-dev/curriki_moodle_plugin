@@ -29,13 +29,20 @@ $functions = array(
         'classpath'   => 'local/curriki_moodle_plugin/externallib.php',
         'description' => 'CurrikiStudio - Fetch a project ID using Moodle course ID.',
         'type'        => 'read',
+    ),
+    'local_curriki_moodle_plugin_get_user_projects' => array(
+        'classname'   => 'local_curriki_moodle_plugin_external',
+        'methodname'  => 'get_user_projects',
+        'classpath'   => 'local/curriki_moodle_plugin/externallib.php',
+        'description' => 'CurrikiStudio - Get list of erolled courses and corresponding project IDs using Moodle user ID.',
+        'type'        => 'read',
     )
 );
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
 $services = array(
     'CurrikiStudio' => array(
-        'functions' => array ('local_curriki_moodle_plugin_create_playlist', 'local_curriki_moodle_plugin_fetch_course', 'local_curriki_moodle_plugin_fetch_project'),
+        'functions' => array ('local_curriki_moodle_plugin_create_playlist', 'local_curriki_moodle_plugin_fetch_course', 'local_curriki_moodle_plugin_fetch_project', 'local_curriki_moodle_plugin_get_user_projects'),
         'restrictedusers' => 0,
         'enabled' => 1
     )
