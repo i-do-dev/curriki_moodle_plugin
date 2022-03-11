@@ -69,12 +69,15 @@ class local_curriki_moodle_plugin_external extends external_api {
                 'parent_name' => new external_value(PARAM_TEXT, 'parent name'),
                 'parent_type' => new external_value(PARAM_TEXT, 'parent type'),
                 'project_id' => new external_value(PARAM_INT, 0),
-                'tool_url' => new external_value(PARAM_TEXT, 'tool url',VALUE_OPTIONAL)
+                'tool_url' => new external_value(PARAM_TEXT, 'tool url',VALUE_OPTIONAL),
+                'org_name' => new external_value(PARAM_TEXT, 'organization name'),
+                'grade_name' => new external_value(PARAM_TEXT, 'grade name'),
+                'subject_name' => new external_value(PARAM_TEXT, 'subject name')
             )
         );
     }
 
-    public static function create_playlist($entity_name, $entity_type, $entity_id, $parent_name, $parent_type, $project_id, $tool_url='') {
+    public static function create_playlist($entity_name, $entity_type, $entity_id, $parent_name, $parent_type, $project_id, $tool_url='', $org_name, $grade_name, $subject_name) {
         $syscontext = context_system::instance();
         require_capability('moodle/site:config', $syscontext);
 
@@ -86,7 +89,10 @@ class local_curriki_moodle_plugin_external extends external_api {
                 'parent_name' => $parent_name,
                 'parent_type' => $parent_type,
                 'project_id' => $project_id,
-                'tool_url' => $tool_url
+                'tool_url' => $tool_url,
+                'org_name' => $org_name,
+                'grade_name' => $grade_name,
+                'subject_name' => $subject_name
             )
         );
 
@@ -97,18 +103,49 @@ class local_curriki_moodle_plugin_external extends external_api {
         
         $entity_data['entity_name'] = $params['entity_name'];
         $entity_data['entity_type'] = $params['entity_type'];
-        $entity_data['entity_id']   = $params['entity_id'];
-        $entity_data['tool_url']   = $params['tool_url'];
+        $entity_data['entity_id'] = $params['entity_id'];
+        $entity_data['tool_url'] = $params['tool_url'];
+        
+        $category_data['org_name'] = $params['org_name'];
+        $category_data['grade_name'] = $params['grade_name'];
+        $category_data['subject_name'] = $params['subject_name'];
 
         /***** Step-1 fetc/create course against program name *****/
         $projectcourse = $DB->get_record('local_curriki_moodle_plugin', array('projectid' => trim($parent_data['project_id'])), '*');
         
         
         if(!is_object($projectcourse)){
+            /* create category */
+            $org_category = new stdClass();
+            $org_category->name = $category_data['org_name'];
+            if (strval($org_category->name) !== '' && $DB->record_exists('course_categories', array('name' => $org_category->name, 'parent'=>0))) {
+                $org_cate = $DB->get_record('course_categories', array('name' => $org_category->name, 'parent'=>0), '*');
+            }else{
+                $org_cate = core_course_category::create($org_category);
+            }
+                        
+            $grade_category = new stdClass();
+            $grade_category->name = $category_data['grade_name'];
+            $grade_category->parent = $org_cate->id;
+            if (strval($grade_category->name) !== '' && $DB->record_exists('course_categories', array('name' => $grade_category->name, 'parent'=>$org_cate->id))) {
+                $grade_cate = $DB->get_record('course_categories', array('name' => $grade_category->name, 'parent'=>$org_cate->id), '*');
+            }else{
+                $grade_cate = core_course_category::create($grade_category);
+            }
+            
+            $subject_category = new stdClass();
+            $subject_category->name = $category_data['subject_name'];
+            $subject_category->parent = $grade_cate->id;
+            if (strval($subject_category->name) !== '' && $DB->record_exists('course_categories', array('name' => $subject_category->name, 'parent'=>$grade_cate->id))) {
+                $subject_cate = $DB->get_record('course_categories', array('name' => $subject_category->name, 'parent'=>$grade_cate->id), '*');
+            }else{
+                $subject_cate = core_course_category::create($subject_category);
+            }            
+            
             $new_course = new stdClass();
             $new_course->fullname = trim($parent_data['parent_name']);
             $new_course->shortname = strtolower( implode( "-",  explode( " ", trim($parent_data['parent_name']) ) ) );
-            $new_course->categoryid = 1;
+            $new_course->categoryid = $subject_cate->id;
             $new_course_rows = core_course_external::create_courses([(array)$new_course]);
             
             //add mapping record into project course mapping table
