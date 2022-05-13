@@ -144,7 +144,7 @@ class local_curriki_moodle_plugin_external extends external_api {
             
             $new_course = new stdClass();
             $new_course->fullname = trim($parent_data['parent_name']);
-            $new_course->shortname = strtolower( implode( "-",  explode( " ", trim($parent_data['parent_name']) ) ) );
+            $new_course->shortname = strtolower( implode( "-",  explode( " ", trim($parent_data['parent_name']) ) ) )."-".time();
             $new_course->categoryid = $subject_cate->id;
             $new_course_rows = core_course_external::create_courses([(array)$new_course]);
             
