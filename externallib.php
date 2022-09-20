@@ -123,7 +123,7 @@ class local_curriki_moodle_plugin_external extends external_api {
             }else{
                 $org_cate = core_course_category::create($org_category);
             }
-                        
+    
             $grade_category = new stdClass();
             $grade_category->name = $category_data['grade_name'];
             $grade_category->parent = $org_cate->id;
@@ -159,10 +159,10 @@ class local_curriki_moodle_plugin_external extends external_api {
             $course = $DB->get_record('course', array('id' => $new_course_rows[0]['id']), '*');
             course_create_section($course, 0);
         }
-        else{
+        else{           
             $course = $DB->get_record('course', array('id' => $projectcourse->courseid), '*');
         }
-        
+
         $course_id = $course->id;
 
         /***** Step-2 Update Playlist Name *****/
@@ -177,15 +177,18 @@ class local_curriki_moodle_plugin_external extends external_api {
         if(empty($tool_url))
             $lti_tool_config = $DB->get_record('lti_types', array('name' => LTI_TOOL_NAME), '*');
         else{
-            $select_condition = $DB->sql_compare_text('baseurl') .' = "'. trim($entity_data['tool_url']).'"';
-            $lti_tool_config = $DB->get_record_select('lti_types', $select_condition, null, '*');
+            $parsed_host = parse_url($entity_data['tool_url'])['host'];
+            $parsed_path = rtrim(parse_url($entity_data['tool_url'])['path'], '/');
+            $tool_parsed_url =  $parsed_host . $parsed_path;
+            $lti_tool_config = $DB->get_record_select('lti_types', $DB->sql_like('baseurl', '?'), array('%'.$tool_parsed_url.'%'));
         }
-        if( is_object($course) && is_object($lti_tool_config) && is_null($section_module) ){
+        if( is_object($course) && is_object($lti_tool_config) && is_null($section_module) ){          
+            $entity_data['module'] = $DB->get_record('modules', array('name' => 'lti'), '*')->id;
             lti_module::set_data($entity_data, $lti_tool_config);
             $lti_module = add_moduleinfo(lti_module::$data, $course);            
             $playlist_lti->id = $lti_module->id;
             $playlist_lti->name = $lti_module->name;
-        }else{            
+        }else{              
             $playlist_lti->id = $section_module['id'];
             $playlist_lti->name = $section_module['name'];
         }      

@@ -47,7 +47,7 @@ class lti_module
             "course" => 2,
             "coursemodule" => 0,
             "section" => 1,
-            "module" => 15,
+            "module" =>  $entity_data["module"], 
             "modulename" => "lti",
             "instance" => 0,
             "add" => "lti",
