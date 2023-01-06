@@ -46,7 +46,7 @@ class lti_module
             "tags" => [],
             "course" => 2,
             "coursemodule" => 0,
-            "section" => 1,
+            "section" => $entity_data["section"],
             "module" =>  $entity_data["module"], 
             "modulename" => "lti",
             "instance" => 0,

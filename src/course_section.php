@@ -51,8 +51,8 @@ class course_section
     {
         $module = null;
         foreach ($modules as $mod) {
-            if (trim($mod['name']) == trim($module_name)) {
-                $module = $mod;                
+            if (trim(htmlspecialchars_decode($mod['name'])) == trim($module_name)) {
+                $module = $module_name;                
             }
         }
         return $module;
