@@ -114,8 +114,14 @@ class local_curriki_moodle_plugin_external extends external_api {
 
         /***** Step-1 fetc/create course against program name *****/
         $projectcourse = $DB->get_record('local_curriki_moodle_plugin', array('projectid' => trim($parent_data['project_id'])), '*');
-        
-        
+        if ($projectcourse) {
+            $course_rel = $DB->get_record('course', array('id' => $projectcourse->courseid), '*');
+            if (!$course_rel) {
+                $DB->delete_records('local_curriki_moodle_plugin', array('id' => $projectcourse->id));
+                $projectcourse = null;
+            }
+        }
+
         if(!is_object($projectcourse)){
             /* create category */
             $org_category = new stdClass();
