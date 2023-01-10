@@ -165,7 +165,6 @@ class local_curriki_moodle_plugin_external extends external_api {
                
             
             $course = $DB->get_record('course', array('id' => $new_course_rows[0]['id']), '*');
-            course_create_section($course, 0);
         }
         else{           
             $course = $DB->get_record('course', array('id' => $projectcourse->courseid), '*');
